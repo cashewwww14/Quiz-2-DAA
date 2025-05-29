@@ -8,7 +8,7 @@ Class: DAA (G)
 
 - Ahmad Zaky Ash Shidqi - 5025231229
 - Muhammad Daffa Rizky Sutrisno - 5025231207
-- Rafif Thariq Dhiyaulhaqi
+- Rafif Thariq Dhiyaulhaqi - 5025231213
 
 ---
 
