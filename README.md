@@ -8,7 +8,7 @@ Class: DAA (G)
 
 - Ahmad Zaky Ash Shidqi - 5025231229
 - Muhammad Daffa Rizky Sutrisno - 5025231207
-- Rafif Thariq Dhiyaulhaqi - 5025231XXX (Please complete the last NIM)
+- Rafif Thariq Dhiyaulhaqi
 
 ---
 
