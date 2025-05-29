@@ -1,6 +1,3 @@
-Berikut adalah versi *README.md* yang sudah dirapikan dan ditingkatkan, siap kamu salin langsung ke GitHub:
-
-````markdown
 # Pathfinding Visualization Project
 
 An interactive Python-based visualization of classic pathfinding algorithms, built with **Pygame**.
