@@ -1,3 +1,10 @@
+# Collaborator
+Class: `DAA(G)`
+- Ahmad Zaky Ash Shidqi - 5025231229
+- Muhammad Daffa Rizky Sutrisno - 5025231207
+- Rafif Thariq Dhiyaulhaqi - 5025231
+
+
 # Greedy BfS
 
 ![image](https://github.com/user-attachments/assets/3f3a7462-8b4f-4d6a-a929-84e589bf8136)
