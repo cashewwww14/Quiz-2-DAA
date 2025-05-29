@@ -284,6 +284,3 @@ def simple_maze_generator(width, height):
     ```bash
     python pacman_pathfinding.py
     ```
-
----
-```
