@@ -1,14 +1,19 @@
-# Greedy Bfs
+# Greedy BfS
 
-![image](https://github.com/user-attachments/assets/bbe35d99-d0b7-44a1-bb3d-9d0ad11898a7)
+![image](https://github.com/user-attachments/assets/3f3a7462-8b4f-4d6a-a929-84e589bf8136)
 
-# A Search
+# A* Search
 
-![image](https://github.com/user-attachments/assets/dc3fba01-3f84-4f94-9c96-e9592e7d268a)
+![image](https://github.com/user-attachments/assets/9dcf1bc4-3e63-4971-88ec-dcc399a79d45)
 
 # Djikstra
 
-![image](https://github.com/user-attachments/assets/74d27b52-35c3-417f-a10d-fa37c1d36e1f)
+![image](https://github.com/user-attachments/assets/eea5bf28-4775-411d-a984-2a21bc7b3565)
+
+# DFS
+
+![image](https://github.com/user-attachments/assets/5453be61-f41a-4bc9-b984-41fa77bfe378)
+
 
 # Pathfinding Visualization Project
 
@@ -243,3 +248,7 @@ The seamless visual feedback makes it easier for users to understand how each al
 - **Flexibility**: User can switch between algorithms and maze types.
 
 ## Conclusion
+
+This project successfully implements and visualizes four major pathfinding algorithms in a modular, interactive framework. The use of recursive maze generation adds complexity and realism, while the visual UI facilitates learning and algorithm comparison. Future improvements could include user-selectable weights, step-by-step execution modes, algorithm performance metrics, and expanded maze types (e.g., hexagonal grids).
+
+This project serves both as an educational tool and a foundation for further AI and game development exploration.
