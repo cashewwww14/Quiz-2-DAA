@@ -1,4 +1,4 @@
-# Pathfinding - Part 5 Enhanced
+# Pathfinding - Part 5 Enhanced - Pacman Theme
 # A* Search, Dijkstra, Greedy BFS, dan DFS dengan Maze Generator
 import pygame as pg
 from os import path
@@ -13,27 +13,28 @@ WIDTH = TILESIZE * GRIDWIDTH
 HEIGHT = TILESIZE * GRIDHEIGHT
 FPS = 30
 
-# Bright Blue Theme Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-BRIGHT_BLUE = (0, 150, 255)
-LIGHT_BLUE = (135, 206, 250)
-NAVY_BLUE = (25, 25, 112)
-CYAN = (0, 255, 255)
-PURPLE = (138, 43, 226)
-YELLOW = (255, 255, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BACKGROUND = (240, 248, 255)  # Alice Blue
-EXPLORED = (176, 224, 230)     # Powder Blue
-WALL_COLOR = (70, 130, 180)    # Steel Blue
-GRID_COLOR = (200, 230, 250)   # Light Steel Blue
+# Pacman Theme Colors
+BLACK = (0, 0, 0)                    # Background
+BLUE = (0, 0, 255)                   # Maze walls
+YELLOW = (255, 255, 0)               # Pacman
+WHITE = (255, 255, 255)              # Dots/text
+RED = (255, 0, 0)                    # Ghost
+ORANGE = (255, 165, 0)               # Ghost
+PINK = (255, 192, 203)               # Ghost
+CYAN = (0, 255, 255)                 # Ghost
+DARK_BLUE = (0, 0, 139)              # Path explored
+LIME = (0, 255, 0)                   # Start icon
+BACKGROUND = BLACK                    # Pacman background
+EXPLORED = (25, 25, 112)             # Dark blue for explored
+WALL_COLOR = BLUE                    # Blue maze walls
+GRID_COLOR = (40, 40, 40)            # Dark gray grid lines
 
 pg.init()
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 clock = pg.time.Clock()
 
-font_name = pg.font.match_font('hack')
+# Use pygame default fonts
+font_name = pg.font.get_default_font()
 def draw_text(text, size, color, x, y, align="topleft"):
     font = pg.font.Font(font_name, size)
     text_surface = font.render(text, True, color)
@@ -65,6 +66,8 @@ class SquareGrid:
         for wall in self.walls:
             rect = pg.Rect(wall * TILESIZE, (TILESIZE, TILESIZE))
             pg.draw.rect(screen, WALL_COLOR, rect)
+            # Add border to walls for more Pacman-like appearance
+            pg.draw.rect(screen, WHITE, rect, 2)
 
 class WeightedGrid(SquareGrid):
     def __init__(self, width, height):
@@ -81,10 +84,12 @@ class WeightedGrid(SquareGrid):
         for wall in self.walls:
             rect = pg.Rect(wall * TILESIZE, (TILESIZE, TILESIZE))
             pg.draw.rect(screen, WALL_COLOR, rect)
+            # Add border to walls for more Pacman-like appearance
+            pg.draw.rect(screen, WHITE, rect, 2)
         for tile in self.weights:
             x, y = tile
             rect = pg.Rect(x * TILESIZE + 3, y * TILESIZE + 3, TILESIZE - 3, TILESIZE - 3)
-            pg.draw.rect(screen, PURPLE, rect)
+            pg.draw.rect(screen, ORANGE, rect)
 
 class PriorityQueue:
     def __init__(self):
@@ -105,11 +110,64 @@ def draw_grid():
     for y in range(0, HEIGHT, TILESIZE):
         pg.draw.line(screen, GRID_COLOR, (0, y), (WIDTH, y))
 
+def create_pacman_icon():
+    """Create a Pacman-like circle icon"""
+    icon = pg.Surface((40, 40), pg.SRCALPHA)
+    pg.draw.circle(icon, YELLOW, (20, 20), 18)
+    # Draw mouth
+    pg.draw.polygon(icon, BLACK, [(20, 20), (35, 10), (35, 30)])
+    return icon
+
+def create_ghost_icon():
+    """Create a ghost-like icon"""
+    icon = pg.Surface((40, 40), pg.SRCALPHA)
+    # Body
+    pg.draw.rect(icon, RED, (8, 12, 24, 20))
+    # Head
+    pg.draw.circle(icon, RED, (20, 16), 12)
+    # Bottom wavy part
+    points = [(8, 32), (12, 28), (16, 32), (20, 28), (24, 32), (28, 28), (32, 32), (32, 40), (8, 40)]
+    pg.draw.polygon(icon, RED, points)
+    # Eyes
+    pg.draw.circle(icon, WHITE, (16, 14), 3)
+    pg.draw.circle(icon, WHITE, (24, 14), 3)
+    pg.draw.circle(icon, BLACK, (16, 14), 1)
+    pg.draw.circle(icon, BLACK, (24, 14), 1)
+    return icon
+
+def create_arrow_icon(direction):
+    """Create arrow icons for path visualization"""
+    icon = pg.Surface((30, 30), pg.SRCALPHA)
+    # Draw a simple arrow
+    center = (15, 15)
+    if direction == (1, 0):  # Right
+        points = [(25, 15), (15, 10), (15, 20)]
+    elif direction == (-1, 0):  # Left
+        points = [(5, 15), (15, 10), (15, 20)]
+    elif direction == (0, 1):  # Down
+        points = [(15, 25), (10, 15), (20, 15)]
+    elif direction == (0, -1):  # Up
+        points = [(15, 5), (10, 15), (20, 15)]
+    elif direction == (1, 1):  # Down-Right
+        points = [(20, 20), (10, 15), (15, 10)]
+    elif direction == (-1, 1):  # Down-Left
+        points = [(8, 20), (18, 15), (13, 10)]
+    elif direction == (1, -1):  # Up-Right
+        points = [(20, 8), (10, 13), (15, 18)]
+    elif direction == (-1, -1):  # Up-Left
+        points = [(8, 8), (18, 13), (13, 18)]
+    else:
+        points = [(15, 10), (20, 15), (15, 20), (10, 15)]
+    
+    pg.draw.polygon(icon, WHITE, points)
+    return icon
+
 def draw_icons():
-    start_center = (goal.x * TILESIZE + TILESIZE / 2, goal.y * TILESIZE + TILESIZE / 2)
-    screen.blit(home_img, home_img.get_rect(center=start_center))
-    goal_center = (start.x * TILESIZE + TILESIZE / 2, start.y * TILESIZE + TILESIZE / 2)
-    screen.blit(cross_img, cross_img.get_rect(center=goal_center))
+    ghost_center = (goal.x * TILESIZE + TILESIZE / 2, goal.y * TILESIZE + TILESIZE / 2)
+    screen.blit(ghost_img, ghost_img.get_rect(center=ghost_center))
+    
+    pacman_center = (start.x * TILESIZE + TILESIZE / 2, start.y * TILESIZE + TILESIZE / 2)
+    screen.blit(pacman_img, pacman_img.get_rect(center=pacman_center))
 
 def vec2int(v):
     return (int(v.x), int(v.y))
@@ -230,6 +288,25 @@ def dfs_search(graph, start, end):
     cost = {node: 0 for node in path}
     return path, cost
 
+def count_path_steps(path, start, goal):
+    """Count the number of steps in the path from start to goal"""
+    if vec2int(goal) not in path:
+        return 0
+    
+    current = start
+    steps = 0
+    
+    while current != goal and vec2int(current) in path and path[vec2int(current)] is not None:
+        steps += 1
+        v = path[vec2int(current)]
+        current = current + v
+        
+        # Prevent infinite loops
+        if steps > 1000:
+            break
+    
+    return steps
+
 def generate_recursive_backtrack_maze(width, height):
     """
     Recursive Backtracking Algorithm untuk generate maze
@@ -324,31 +401,14 @@ def simple_maze_generator(width, height):
     
     return walls
 
-# Load icons (gunakan placeholder jika file tidak tersedia)
-try:
-    icon_dir = path.join(path.dirname(__file__), './icons')
-    home_img = pg.image.load(path.join(icon_dir, 'home.png')).convert_alpha()
-    home_img = pg.transform.scale(home_img, (50, 50))
-    home_img.fill((0, 200, 255, 255), special_flags=pg.BLEND_RGBA_MULT)
-    cross_img = pg.image.load(path.join(icon_dir, 'cross.png')).convert_alpha()
-    cross_img = pg.transform.scale(cross_img, (50, 50))
-    cross_img.fill((255, 100, 0, 255), special_flags=pg.BLEND_RGBA_MULT)
-    arrows = {}
-    arrow_img = pg.image.load(path.join(icon_dir, 'arrowRight.png')).convert_alpha()
-    arrow_img = pg.transform.scale(arrow_img, (50, 50))
-    for dir in [(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)]:
-        arrows[dir] = pg.transform.rotate(arrow_img, vec(dir).angle_to(vec(1, 0)))
-except:
-    # Create simple colored rectangles as fallback
-    home_img = pg.Surface((50, 50))
-    home_img.fill((0, 255, 0))
-    cross_img = pg.Surface((50, 50))
-    cross_img.fill((255, 0, 0))
-    arrows = {}
-    for dir in [(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)]:
-        arrow_surf = pg.Surface((50, 50))
-        arrow_surf.fill((255, 255, 0))
-        arrows[dir] = arrow_surf
+# Create Pacman-themed icons
+pacman_img = create_pacman_icon()
+ghost_img = create_ghost_icon()
+
+# Create arrow icons
+arrows = {}
+for dir in [(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)]:
+    arrows[dir] = create_arrow_icon(dir)
 
 g = WeightedGrid(GRIDWIDTH, GRIDHEIGHT)
 
@@ -420,7 +480,8 @@ while running:
                 current_algorithm_index = (current_algorithm_index + 1) % len(algorithms)
                 search_type = algorithms[current_algorithm_index]
                 path, c = search_type(g, goal, start)
-                print(f"Switched to: {algorithm_names[current_algorithm_index]}")
+                steps = count_path_steps(path, start, goal)
+                print(f"Switched to: {algorithm_names[current_algorithm_index]} - Steps: {steps}")
             if event.key == pg.K_g:
                 # Generate new maze using Recursive Backtracking algorithm
                 print("Generating Recursive Backtrack maze...")
@@ -429,7 +490,8 @@ while running:
                 for wall in backtrack_walls:
                     g.walls.append(wall)
                 path, c = search_type(g, goal, start)
-                print(f"Generated Recursive Backtrack maze with {len(g.walls)} walls!")
+                steps = count_path_steps(path, start, goal)
+                print(f"Generated Recursive Backtrack maze with {len(g.walls)} walls! Steps: {steps}")
             if event.key == pg.K_s:
                 # Generate simple random maze
                 print("Generating simple maze...")
@@ -438,19 +500,22 @@ while running:
                 for wall in simple_walls:
                     g.walls.append(wall)
                 path, c = search_type(g, goal, start)
-                print(f"Generated simple maze with {len(g.walls)} walls!")
+                steps = count_path_steps(path, start, goal)
+                print(f"Generated simple maze with {len(g.walls)} walls! Steps: {steps}")
             if event.key == pg.K_r:
                 # Reset to original maze
                 g.walls.clear()
                 for wall in original_walls:
                     g.walls.append(vec(wall))
                 path, c = search_type(g, goal, start)
-                print("Reset to original maze!")
+                steps = count_path_steps(path, start, goal)
+                print(f"Reset to original maze! Steps: {steps}")
             if event.key == pg.K_c:
                 # Clear all walls
                 g.walls.clear()
                 path, c = search_type(g, goal, start)
-                print("Cleared all walls!")
+                steps = count_path_steps(path, start, goal)
+                print(f"Cleared all walls! Steps: {steps}")
             if event.key == pg.K_m:
                 # dump the wall list for saving
                 print([(int(loc.x), int(loc.y)) for loc in g.walls])
@@ -467,10 +532,10 @@ while running:
                 goal = mpos
             path, c = search_type(g, goal, start)
 
-    pg.display.set_caption("Pathfinding Demo - FPS: {:.2f}".format(clock.get_fps()))
+    pg.display.set_caption("Pacman Pathfinding Demo - FPS: {:.2f}".format(clock.get_fps()))
     screen.fill(BACKGROUND)
     
-    # Fill explored area
+    # Fill explored area with dark blue
     for node in path:
         x, y = node
         rect = pg.Rect(x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE)
@@ -479,9 +544,19 @@ while running:
     draw_grid()
     g.draw()
     
+    # Draw dots on empty spaces (Pacman style)
+    for x in range(GRIDWIDTH):
+        for y in range(GRIDHEIGHT):
+            pos = vec(x, y)
+            if pos not in g.walls and pos != start and pos != goal:
+                dot_x = x * TILESIZE + TILESIZE // 2
+                dot_y = y * TILESIZE + TILESIZE // 2
+                pg.draw.circle(screen, WHITE, (dot_x, dot_y), 2)
+    
     # draw path from start to goal - Skip first arrow to avoid overlap with start icon
     current = start
     l = 0
+    path_steps = 0
     # Move to first step before drawing arrows
     if vec2int(current) in path and path[vec2int(current)] is not None:
         v = path[vec2int(current)]
@@ -490,6 +565,7 @@ while running:
         else:
             l += 14
         current = current + v
+        path_steps += 1
     
     # Now draw arrows from second step onwards
     while current != goal and vec2int(current) in path and path[vec2int(current)] is not None:
@@ -505,20 +581,23 @@ while running:
         screen.blit(img, r)
         # find next in path
         current = current + v
+        path_steps += 1
         
     draw_icons()
     
-    # Display current algorithm name and controls
+    # Display current algorithm name and metrics
     current_name = algorithm_names[current_algorithm_index]
-    draw_text(current_name, 30, NAVY_BLUE, WIDTH - 10, HEIGHT - 10, align="bottomright")
-    draw_text('Path length: {}'.format(l), 30, NAVY_BLUE, WIDTH - 10, HEIGHT - 45, align="bottomright")
+    draw_text(current_name, 28, YELLOW, WIDTH - 10, HEIGHT - 10, align="bottomright")
+    draw_text('Path Length: {}'.format(l), 24, WHITE, WIDTH - 10, HEIGHT - 40, align="bottomright")
+    draw_text('Steps: {}'.format(path_steps), 24, WHITE, WIDTH - 10, HEIGHT - 70, align="bottomright")
     
-    # Controls
-    draw_text('SPACE: Change Algorithm', 20, NAVY_BLUE, 10, 10)
-    draw_text('S: Generate Simple Maze', 20, NAVY_BLUE, 10, 35)
-    draw_text('R: Reset Original Maze', 20, NAVY_BLUE, 10, 60)
-    draw_text('C: Clear All Walls', 20, NAVY_BLUE, 10, 85)
-    draw_text('Mouse: Left=Wall, Middle=Start, Right=Goal', 20, NAVY_BLUE, 10, 110)
+    # Controls with Pacman theme colors
+    draw_text('SPACE: Change Algorithm', 18, YELLOW, 10, 10)
+    draw_text('G: Generate Recursive Maze', 18, CYAN, 10, 30)
+    draw_text('S: Generate Simple Maze', 18, PINK, 10, 50)
+    draw_text('R: Reset Original Maze', 18, WHITE, 10, 70)
+    draw_text('C: Clear All Walls', 18, LIME, 10, 90)
+    draw_text('Mouse: Left=Wall, Middle=Pacman, Right=Ghost', 18, ORANGE, 10, 110)
     
     pg.display.flip()
 
