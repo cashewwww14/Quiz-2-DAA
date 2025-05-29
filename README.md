@@ -2,7 +2,7 @@
 
 ![image](https://github.com/user-attachments/assets/3f3a7462-8b4f-4d6a-a929-84e589bf8136)
 
-# A Search
+# A* Search
 
 ![image](https://github.com/user-attachments/assets/9dcf1bc4-3e63-4971-88ec-dcc399a79d45)
 
