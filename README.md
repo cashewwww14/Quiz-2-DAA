@@ -196,16 +196,15 @@ Maze cells are visually represented with black boxes (`make_barrier()`).
 
 ### **8. Color Codes for Node Status**
 
-| Color      | Meaning                |
-| ---------- | ---------------------- |
-| White      | Empty node             |
-| Black      | Barrier / Wall         |
-| Orange     | Start node             |
-| Blue       | End node               |
-| Green      | In open set (frontier) |
-| Red        | Visited / Closed       |
-| Purple     | Final path             |
-| Grey lines | Grid boundaries        |
+| Color      | Meaning          |
+| ---------- | ---------------- |
+| White      | Empty node       |
+| Dark Blue  | Barrier / Wall   |
+| RED        | Start node       |
+| Green      | End node         |
+| Light Blue | Visited / Closed |
+| White      | Final path       |
+| Grey lines | Grid boundaries  |
 
 These colors are dynamically updated by calling methods like `make_start()`, `make_end()`, etc., followed by `draw()`.
 
