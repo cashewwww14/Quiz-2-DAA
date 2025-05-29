@@ -27,7 +27,7 @@ This project is a pathfinding visualizer that demonstrates how three fundamental
 
 ---
 
-## ## 📘 Detailed Explanation of Algorithms
+## 📘 Detailed Explanation of Algorithms
 
 This project implements and compares three pathfinding algorithms: **A\***, **Dijkstra**, and **Greedy Best-First Search**. All algorithms operate on a 2D grid and attempt to find a path from a **start** node to a **goal** node.
 
