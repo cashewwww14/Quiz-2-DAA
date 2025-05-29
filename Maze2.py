@@ -1,6 +1,5 @@
 # Pathfinding - Part 5 Enhanced
 # A* Search, Dijkstra, Greedy BFS, DFS, dan Kruskal Maze Generator
-# KidsCanCode 2017 - Modified with DFS and Kruskal
 import pygame as pg
 from os import path
 import heapq
@@ -47,7 +46,7 @@ class SquareGrid:
         self.height = height
         self.walls = []
         self.connections = [vec(1, 0), vec(-1, 0), vec(0, 1), vec(0, -1)]
-        # comment/uncomment this for diagonals:
+        # untuk diagonal atau tidak
         self.connections += [vec(1, 1), vec(-1, 1), vec(1, -1), vec(-1, -1)]
 
     def in_bounds(self, node):
